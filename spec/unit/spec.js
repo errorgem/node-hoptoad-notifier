@@ -15,8 +15,23 @@ JSpec.describe('Hoptoad', function() {
         },
 
         request: {
+          'on' : function(event, callback) {
+            this.callbacks = this.callbacks || [];
+            this.callbacks[event] = callback;
+
+            return this;
+          },
           'end'   : function() {},
           'write' : function() {}
+        },
+
+        response: {
+          'on' : function(event, callback) {
+            this.callbacks = this.callbacks || [];
+            this.callbacks[event] = callback;
+
+            return this;
+          }
         }
       };
 
@@ -98,6 +113,57 @@ JSpec.describe('Hoptoad', function() {
     it('should default environment to production if not set', function() {
       Hoptoad.notify({});
       Hoptoad.ENVIRONMENT.should.eql('production');
+    });
+
+    describe('with a callback', function() {
+      it('should call the callback with an error if the request triggers an error event', function() {
+        Hoptoad.notify({}, function(error) {
+          error.should.eql(true);
+        });
+
+        var
+        context = JSpec.context;
+        context.request.callbacks['error'](true);
+      });
+
+      it('should call the callback with an error if the response triggers an error event', function() {
+        Hoptoad.notify({}, function(error) {
+          error.should.eql(true);
+        });
+
+        var
+        context = JSpec.context;
+        context.request.callbacks['response'](context.response);
+        context.response.callbacks['error'](true);
+      });
+
+      it('should call the callback with an error if the response has an unsuccessful status code', function() {
+        [100, 400, 401, 404].forEach(function(statusCode) {
+          Hoptoad.notify({}, function(error) {
+            error.message.should.eql('Hoptoad: Bad status code. (' + statusCode + ')');
+          });
+
+          var
+          context = JSpec.context;
+          context.request.callbacks['response'](context.response);
+          context.response.statusCode = statusCode;
+          context.response.callbacks['end']();
+        });
+      });
+
+      it('should call the callback without an error if the response has an successful status code', function() {
+        [200, 201].forEach(function(statusCode) {
+          Hoptoad.notify({}, function(error) {
+            error.should.be(undefined);
+          });
+
+          var
+          context = JSpec.context;
+          context.request.callbacks['response'](context.response);
+          context.response.statusCode = statusCode;
+          context.response.callbacks['end']();
+        });
+      });
     });
   });
 
