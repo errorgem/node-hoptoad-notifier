@@ -4,7 +4,8 @@
   "homepage"     : "http://github.com/tristandunn/node-hoptoad-notifier",
   "author"       : "Tristan Dunn <hello@tristandunn.com>",
   "contributors" : [
-    "Alex Wolfe <alexkwolfe@gmail.com>"
+    "Alex Wolfe <alexkwolfe@gmail.com>",
+    "Felix Geisendörfer <felix@debuggable.com>"
   ],
   "repository" : {
     "type" : "git",
