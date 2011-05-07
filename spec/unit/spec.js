@@ -121,7 +121,9 @@ JSpec.describe('Hoptoad', function() {
 
         var
         context = JSpec.context;
-        context.request.callbacks.should.eql(undefined);
+        context.request.callbacks['error'].should.eql(Hoptoad.NOOP);
+        context.request.callbacks['response'](context.response);
+        context.response.callbacks['error'].should.eql(Hoptoad.NOOP);
       });
     });
 
