@@ -115,6 +115,16 @@ JSpec.describe('Hoptoad', function() {
       Hoptoad.ENVIRONMENT.should.eql('production');
     });
 
+    describe('without a callback', function() {
+      it('should not assign request or response callbacks', function() {
+        Hoptoad.notify({});
+
+        var
+        context = JSpec.context;
+        context.request.callbacks.should.eql(undefined);
+      });
+    });
+
     describe('with a callback', function() {
       it('should call the callback with an error if the request triggers an error event', function() {
         Hoptoad.notify({}, function(error) {

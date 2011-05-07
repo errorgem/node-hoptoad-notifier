@@ -10,6 +10,15 @@ Report exceptions to Hoptoad from node.js.
 
     process.addListener('uncaughtException', function(error) {
       Hoptoad.notify(error);
+
+      // Optionally provide a callback.
+      Hoptoad.notify(error, function(err) {
+        if (err) {
+          throw err;
+        } else {
+          console.log('Error sent to Hoptoad.');
+        }
+      });
     });
 
 ## Configuration
